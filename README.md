@@ -1,6 +1,7 @@
 # TypedSignalR.Client
 
-[![build-and-test](https://github.com/nenoNaninu/TypedSignalR.Client/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/nenoNaninu/TypedSignalR.Client/actions/workflows/build-and-test.yaml)
+[![NuGet](https://img.shields.io/nuget/v/TypedSignalR.Client.svg)](https://www.nuget.org/packages/TypedSignalR.Client)
+[![build-and-test](https://github.com/nenoNaninu/TypedSignalR.Client/actions/workflows/build-and-test.yaml/badge.svg?branch=master)](https://github.com/nenoNaninu/TypedSignalR.Client/actions/workflows/build-and-test.yaml)
 
 C# [Source Generator](https://docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview) to create strongly typed SignalR clients.
 
@@ -299,3 +300,5 @@ Generated source code can be seen in Visual Studio.
   - TypeScript source generator to provide strongly typed SignalR clients by analyzing C# type definitions.
 - [nenoNaninu/TypedSignalR.Client.DevTools](https://github.com/nenoNaninu/TypedSignalR.Client.DevTools)
   - SignalR development tools inspired by SwaggerUI.
+- [nenoNaninu/AspNetCore.SignalR.OpenTelemetry](https://github.com/nenoNaninu/AspNetCore.SignalR.OpenTelemetry)
+  - SignalR instrumentation library for OpenTelemetry.

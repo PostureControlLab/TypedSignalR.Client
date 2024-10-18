@@ -7,10 +7,12 @@ namespace TypedSignalR.Client.Templates;
 public sealed class HubConnectionExtensionsBinderTemplate
 {
     private readonly IReadOnlyList<TypeMetadata> _receiverTypes;
+    private readonly SpecialSymbols _specialSymbols;
 
-    public HubConnectionExtensionsBinderTemplate(IReadOnlyList<TypeMetadata> receiverTypes)
+    public HubConnectionExtensionsBinderTemplate(IReadOnlyList<TypeMetadata> receiverTypes, SpecialSymbols specialSymbols)
     {
         _receiverTypes = receiverTypes;
+        _specialSymbols = specialSymbols;
     }
 
     public string TransformText()
@@ -24,6 +26,7 @@ public sealed class HubConnectionExtensionsBinderTemplate
 #nullable enable
 #pragma warning disable CS1591
 #pragma warning disable CS8767
+#pragma warning disable CS8613
 namespace TypedSignalR.Client
 {
     internal static partial class HubConnectionExtensions
@@ -32,9 +35,9 @@ namespace TypedSignalR.Client
         foreach (var receiverType in _receiverTypes)
         {
             sb.AppendLine($$"""
-        private sealed class BinderFor_{{receiverType.CollisionFreeName}} : IReceiverBinder<{{receiverType.InterfaceFullName}}>
+        private sealed class BinderFor_{{receiverType.CollisionFreeName}} : IReceiverBinder<{{receiverType.FullyQualifiedInterfaceName}}>
         {
-            public global::System.IDisposable Bind(global::Microsoft.AspNetCore.SignalR.Client.HubConnection connection, {{receiverType.InterfaceFullName}} receiver)
+            public global::System.IDisposable Bind(global::Microsoft.AspNetCore.SignalR.Client.HubConnection connection, {{receiverType.FullyQualifiedInterfaceName}} receiver)
             {
                 var compositeDisposable = new CompositeDisposable({{receiverType.Methods.Count}});
 
@@ -57,7 +60,7 @@ namespace TypedSignalR.Client
         foreach (var receiverType in _receiverTypes)
         {
             sb.AppendLine($$"""
-            binders.Add(typeof({{receiverType.InterfaceFullName}}), new BinderFor_{{receiverType.CollisionFreeName}}());
+            binders.Add(typeof({{receiverType.FullyQualifiedInterfaceName}}), new BinderFor_{{receiverType.CollisionFreeName}}());
 """);
         }
 
@@ -67,6 +70,7 @@ namespace TypedSignalR.Client
         }
     }
 }
+#pragma warning restore CS8613
 #pragma warning restore CS8767
 #pragma warning restore CS1591
 """);
@@ -102,7 +106,7 @@ namespace TypedSignalR.Client
     private string CreateRegistrationStringCore(MethodMetadata method)
     {
         return $$"""
-                compositeDisposable.Add(global::Microsoft.AspNetCore.SignalR.Client.HubConnectionExtensions.On(connection, nameof(receiver.{{method.MethodName}}), {{method.CreateParameterTypeArrayString()}}, HandlerConverter.Convert{{method.CreateTypeArgumentsStringForHandlerConverter()}}(receiver.{{method.MethodName}})));
+                compositeDisposable.Add(global::Microsoft.AspNetCore.SignalR.Client.HubConnectionExtensions.On(connection, nameof(receiver.{{method.MethodName}}), {{method.CreateParameterTypeArrayString(_specialSymbols)}}, HandlerConverter.Convert{{method.CreateTypeArgumentsStringForHandlerConverter(_specialSymbols)}}(receiver.{{method.MethodName}})));
 """;
     }
 }
